@@ -1,0 +1,237 @@
+Text Type:	str
+Numeric Types:	int, float, complex
+Sequence Types:	list, tuple, range
+Mapping Type:	dict
+Set Types:	set, frozenset
+Boolean Type:	bool
+Binary Types:	bytes, bytearray, memoryview
+None Type:	NoneType
+
+
+
+python manage.py makemigrations 
+python manage.py migrate 
+ python manage.py runserver
+
+ python manage.py shell 
+ python manage.py shell 
+In [1]: from book.models import book
+2. objects=book.objects.all()
+3.for i in objects:
+   ...:     print(i)
+
+create :-go to python manage.py shell
+from app name.models import model_name
+Model name.objects.create(author="mahesh",book_name="science")
+class_name.objects,create(author="mahesh",book_name="science")
+
+update:- 
+object=class_name.objects.get(id=1)
+object.author="ram"
+object.save()
+
+
+delete:- object=class_name.objects.get(id=3)
+object.delete()
+
+list:-objects=book.objects.all()
+for i in objects:
+   ...:     print(i) two enter
+
+filter:-object=class_name.objects.filter(author_name="ram")
+ 
+MVT:- Model(database) View(logics) Template(render)
+
+			views.py
+
+		from django.shortcuts import render
+
+		from mysite.book.models import Laptops
+
+		# Create your views here.
+		def index(request):
+    			laptop_list=Laptops.objects.all()
+   	 		laptops={
+        		'laptops':laptop_list #key value side
+    			}
+    			return render(request,'Laptops/laptop-list.htm',laptops)
+
+		url.py
+from django.contrib import admin
+from django.urls import path,include
+from django.contrib.auth import views as auth_views
+from book import views
+urlpatterns = [
+    path('admin/', admin.site.urls,name='admin'),
+    path('',views.index, name='index'),
+]
+
+			setting.py
+        'DIRS': [os.path.join(BASE_DIR, 'book/templates')], 
+
+				views.py
+	from django.shortcuts import render,redirect
+	def delete(request,id):
+		del_obj=Laptops.objects.get(id=id)
+		del_obj.delete()
+		return redirect('index')
+				url.py
+    path('delete/<int:id>',views.delete, name='delete'),
+   		Laptop.html
+                    <td><a href="{% url 'delete' laptop.id %}" onclick="return confirm('Are you sure you want to delete this ittems?');"><i class="bi bi-trash-fill" aria-hidden=""true>
+                    </i></a></td> #delete button at last in row
+				Laptop-create.html #form 
+			<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">     
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.1/font/bootstrap-icons.css">
+    <title>Page Title</title>
+</head>
+<body>
+    <div>
+        <form action="{% url 'create' %}" method="post">
+        {% csrf_token %}
+        <div class="row">
+        <div class="col">
+        <label for="model">Model Name</label>
+        <input type="text" class="form-control" name="model">
+        </div>
+        <div class="col">
+        <label for="manufacturer">Manufacturer</label>
+        <input type="text" class="form-control" name="manufacturer">
+        </div>
+        </div>
+        <div class="row">
+        <div class="col">
+        <label for="gpu">GPU</label>
+        <input type="text" class="form-control" name="gpu">
+        </div>
+        <div class="col">
+        <label for="cpu">CPU</label>
+        <input type="text" class="form-control" name="cpu">
+        </div>
+        </div>
+        <div class="row">
+        <div class="col">
+        <label for="ram">RAM</label>
+        <input type="text" class="form-control" name="ram">
+        </div>
+        <div class="col">
+        <label for="price">Price</label>
+        <input type="text" class="form-control" name="price">
+        </div>
+        </div>
+        <button class="btn btn-primary" type="submit">Add</button>
+        </form>
+        <a href="{% url 'index' %}">Back</a>
+        </div>
+</body>
+</html>
+
+
+		url.py
+		    path('create', views.create, name='create'),
+
+			views.py
+	
+def create(request):
+    if request.method == "POST":
+        model = request.POST['model']
+        manufacturer = request.POST['manufacturer']
+        cpu = request.POST['cpu']
+        gpu = request.POST['gpu']
+        ram = request.POST['ram']
+        price = request.POST['price']
+        laptop = Laptops(name=model,manufacturer=manufacturer,cpu=cpu,gpu=gpu,ram=ram,price=price)
+        laptop.save()
+    return redirect('index')
+    else:
+        return render(request, 'function_based/laptop-create.htm')
+
+		Laptop-list.html
+    <button class="btn btn-success"><a href="{% url 'create' %}" style="text-decoration: none; color:white;">Add Laptops</a></button> #to create button
+      
+				views.py
+update
+
+def update(request, id):
+    obj = Laptops.objects.get(id=id)
+    queryset={
+    'queryset':obj  
+    }
+    if request.method == "POST":
+        model = request.POST['model']
+        manufacturer = request.POST['manufacturer']
+        cpu = request.POST['cpu']
+        gpu = request.POST['gpu']
+        ram = request.POST['ram']
+        price = request.POST['price']
+
+        obj.name=model
+        obj.manufacturer=manufacturer
+        obj.cpu=cpu
+        obj.gpu=gpu
+        obj.ram=ram
+        obj.price=price
+        obj.save()
+        return redirect('index')
+    else:
+        return render(request,'book/laptop-update.htm', queryset)
+
+			url.py 
+   update
+       path('update/<int:id>', views.update, name='update'),
+
+			Laptop-updat.html
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">     
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.1/font/bootstrap-icons.css">
+        <title>Page Title</title>
+    </head>
+    <body>
+        <div>
+            <form action="{% url 'update' queryset.id %}" method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col">
+                        <label for="model">Model Name</label>
+                        <input type="text" class="form-control" name="model" value="{{queryset.name}}">
+                    </div>
+                    <div class="col">
+                        <label for="manufacturer">Manufacturer</label>
+                        <input type="text" class="form-control" name="manufacturer" value="{{queryset.manufacturer}}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label for="gpu">GPU</label>
+                        <input type="text" class="form-control" name="gpu" value="{{queryset.gpu}}">
+                    </div>
+                    <div class="col">
+                        <label for="cpu">CPU</label>
+                        <input type="text" class="form-control" name="cpu" value="{{queryset.cpu}}">
+                    </div>
+                </div>
+            <div class="row">
+                <div class="col">
+                    <label for="ram">RAM</label>
+                    <input type="text" class="form-control" name="ram" value="{{queryset.ram}}">
+                </div>
+                <div class="col">
+                    <label for="price">Price</label>
+                    <input type="text" class="form-control" name="price" value="{{queryset.price}}">
+                </div>
+            </div>
+            <button class="btn btn-primary" type="submit">Update</button>
+            </form>
+            <a href="{% url 'index' %}">Back</a>
+        </div>
+        
+    </body>
+</html>

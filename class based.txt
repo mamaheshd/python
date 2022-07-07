@@ -1,0 +1,215 @@
+2079/03/12
+
+django-admin startapp classbased  #to create class
+classbased-> models.py
+	class Laptops(models.Model):
+    		manufacturer=models.CharField(max_length=50,null=True,blank=True)
+    		name=models.CharField(max_length=20,null=True,blank=True)
+    		ram=models.CharField(max_length=20,null=True,blank=True)
+    		gpu=models.CharField(max_length=20,null=True,blank=True)
+    		cpu=models.CharField(max_length=20,null=True,blank=True)
+    		price=models.DecimalField(max_digits=50,null=True,decimal_places=2,blank=True)
+    
+    		def __str__(self):
+        		return (self.name)
+
+settings.py
+installed_app->> 'classbased',
+ classbased->> admin.py->>
+from django.contrib import admin
+
+# Register your models here.
+from .models import Laptops
+admin.site.register(Laptops)
+
+python manage.py makemigrations 
+python manage.py migrate 
+python manage.py runserver
+
+
+create folder templates
+create folder classbased
+create html files
+  
+
+ 	views.py
+from django.views.generic import ListView, TemplateView, DeleteView, UpdateView, DetailView
+
+class LaptopListView(ListView):
+    model = Laptops
+    template_name='classbased/laptop-list.html'
+    context_object_name='laptops'
+    
+inside book folder 
+create urls.py
+from classbased import views
+from django.contrib import admin
+from django.urls import path,include
+urlpatterns = [
+    path('admin/', admin.site.urls,name='admin'),
+    path('',views.LaptopListView.as_view(), name='Laptop-list.html'),
+    #path('<int:pk>/update', views.BookUpdateView.as_view(), name='book-update'),
+    #path('<int:pk>/delete', views.BookDeleteView.as_view(), name='book-delete'),
+    #path('detail/<int:pk>', views.BookDetailView.as_view(), name='book-detail'),
+]
+
+2079/03/18
+inside classbase folder 
+create urls.py
+
+from classbased import views
+from django.contrib import admin
+from django.urls import path,include
+urlpatterns = [
+    path('admin/', admin.site.urls,name='admin'),
+    path('',views.LaptopListView.as_view(), name='Laptop-list.html'),
+    #path('<int:pk>/update', views.BookUpdateView.as_view(), name='book-update'),
+    #path('<int:pk>/delete', views.BookDeleteView.as_view(), name='book-delete'),
+    #path('detail/<int:pk>', views.BookDetailView.as_view(), name='book-detail'),
+]
+
+project ko urls.py add
+    path('laptop/',include('classbased.urls')),
+    path('laptop/',include('book.urls')),
+
+classbased views.py
+from django.core.paginator import Paginator
+def get_context_data(self,*args,**kwargs):
+    Laptops=self.get_queryset()
+    paginator =paginator(Laptops,3)
+    page_number =self.request.get('page')
+    page_obj=paginator.get_page(page_number)
+    context={'laptops':page_obj}
+    return context
+ on classbased laptop-list.html at end of table tag
+
+<div class="container p-4">
+<div class="pagination justify-content-center">
+<span class="step-links">
+{% if books.has_previous %}
+<a href="?page=1">&laquo;first</a>
+<a href="?page={{ books.previous_page_number }}">previous</a>
+{% endif %}
+
+                    <span class="current">
+                        Page {{ books.number }} of {{ books.paginator.num_pages }}
+                    </span>
+
+                  {% if books.has_next %}
+                      <a href="?page={{ books.next_page_number }}">next</a>
+                      <a href="?page={{ books.paginator.num_pages }}">last &raquo;</a>
+                  {% endif %}
+                </span>
+                </div>
+            </div>
+    </div> 
+
+views.py 
+from .forms import LaptopRegistration
+
+    class LaptopCreateView(CreateView):
+        form_class = LaptopRegistration
+        template_name = 'class_based/Laptop-list.html'
+        success_url = reverse_lazy('laptop-list')
+
+	from django.views.generic import ListView, CreateView,
+
+
+terminal
+ pip install django-crispy-forms
+
+settings.py
+install_app
+  'crispy_forms',
+outside install_app
+CRISPY_TEMPLATE_PACK= 'bootstrap4'
+
+inside classbased urls.py 
+    path('create',views.LaptopCreateView.as_view(),name='laptop-create'),
+views.py
+from django.urls import reverse_lazy
+
+laptop-create.html 
+<body>
+    {% load crispy_forms_tags %}
+    <div>
+        <form method="post">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit" class="btn btn-success">
+        Add
+        </button>
+        </form>
+        </div>
+</body>
+
+classbased urls.py
+from classbased import views
+from django.contrib import admin
+from django.urls import path,include
+urlpatterns = [
+    path('admin/', admin.site.urls,name='admin'),
+    path('',views.LaptopListView.as_view(),name="Laptop-list"),
+    #path('<int:pk>/update', views.BookUpdateView.as_view(), name='book-update'),
+    #path('<int:pk>/delete', views.BookDeleteView.as_view(), name='book-delete'),
+    #path('detail/<int:pk>', views.BookDetailView.as_view(), name='book-detail'),
+    path('create',views.LaptopCreateView.as_view(),name='Laptop-create'),
+]
+
+classbased laptop-update.html
+
+
+{% load crispy_forms_tags %}
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">     
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.1/font/bootstrap-icons.css">
+        <title>Page Title</title>
+    </head>
+    <body>
+        <div>
+            <form method="post">
+                {% csrf_token %}
+                {{ form|crispy }}
+                <button type="submit" class="btn btn-success">
+                     Update
+                </button>
+                <button class="btn btn-danger"><a href="{% url 'Laptop-list'%}"> Go back</a></button>
+            </form>
+        </div>
+        
+    </body>
+</html>
+
+
+
+classbased url.py
+from classbased import views
+from django.contrib import admin
+from django.urls import path,include
+urlpatterns = [
+    path('admin/', admin.site.urls,name='admin'),
+    path('',views.LaptopListView.as_view(),name="Laptop-list"),
+    #path('<int:pk>/update', views.BookUpdateView.as_view(), name='book-update'),
+    #path('<int:pk>/delete', views.BookDeleteView.as_view(), name='book-delete'),
+    #path('detail/<int:pk>', views.BookDetailView.as_view(), name='book-detail'),
+    path('create',views.LaptopCreateView.as_view(),name='Laptop-create'),
+    path('<int:pk>update',views.LaptopsUpdateView.as_view(),name='Laptop-update'),
+]
+
+views.py
+class LaptopsUpdateView(UpdateView):
+    model= Laptops
+    template_name ='classbased/laptop-update.htm'
+    context_object_name = 'laptop'
+    fields =('manufacturer','name','ram','gpu','cpu','price') 
+    success_url =reverse_lazy('Laptop-list')
+
+class LaptopDeleteViews(DeleteViews):
+    model= Laptops
+    template_name='classbased/Laptop-delete.htm'
+    sucess_url= reverse_lazy('Laptop-list')
+
+2079/03/19

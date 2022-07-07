@@ -1,0 +1,12 @@
+<html>
+    <form method="post">
+        {%csrf_token %}
+        <div class="alert alert-warning" role="älert">
+            are you sure 
+
+        </div>
+        <button type="submit" class="btn btn-danger"> Delete</button>
+        <button class="btn btn-sucess"><a href="{%url 'Laptop-list' %}"></a></button>
+
+    </form>
+</html>

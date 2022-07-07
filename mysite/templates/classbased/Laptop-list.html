@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+{% if user.is_authenticated %}
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">     
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.1/font/bootstrap-icons.css">
+    <title>Page Title</title>
+</head>
+<body>
+    <div class="container">
+        <div class="table-responsive" >
+        <table class="table table-bordered table-hover table-striped  ">
+            <caption class="text-center">List of laptops</caption>
+            <thead class="thead-dark">
+                <tr class="table-danger">
+                    <th>manufacturer</th>
+                    <th>name</th>
+                    <th>ram</th>
+                    <th>gpu</th>
+                    <th>cpu</th>
+                    <th>price</th>
+                </tr>
+            </thead>
+    {% for laptop in laptops %}
+            <tbody>
+                <tr class="table-info">
+                    <td>{{laptop.manufacturer}} </td>
+                    <td>{{laptop.name}} </td>
+                    <td>{{laptop.ram}} </td>
+                    <td>{{laptop.gpu}} </td>
+                    <td>{{laptop.cpu}} </td>
+                    <td>{{laptop.price}} </td>
+                    <td>
+                        <a href="{%url 'Laptop-updates' laptop.id %}">
+                        <!-- <i class ="bi bi-pecil-square" arial-hidden="true"></i> --> update
+                        </a>
+                    </td>
+                    <td><a href="{% url 'Laptop-delete' laptop.id %}">delete</a></td>
+                </tr>
+            </tbody>
+    {% endfor%}
+        </table>
+        
+    </div>
+    {% else%}
+    
+     </body>
+</html>

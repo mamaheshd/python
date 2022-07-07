@@ -1,0 +1,32 @@
+2079/03/21
+1)
+multiply_nce
+setup.py
+mul-nce
+__init.py__
+
+from setuptools import setup, find_packages
+
+setup(
+    name="mul_nce",
+    version="0.1",
+    packages=[".mul_nce"],
+    install_requires=[],
+)
+
+init.py
+def multiply(a,b):
+    return a*b
+
+terminal
+pip install wheel setuptools
+
+
+ python setup.py bdist_wheel --universal
+
+
+terminal
+pip install .\mul_nce-0.1-py2.py3-none-any.whl
+
+from mul_nce import multiply
+Z:/python/python%20lab/multiply_nce/dist/mul_nce-0.1-py2.py3-none-any.whl

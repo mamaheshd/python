@@ -1,0 +1,23 @@
+from operator import truediv
+from pyexpat import model
+from django.db import models
+
+class book(models.Model): #creatio of table
+    first_name_author= models.CharField(max_length=200) #col of table 
+    last_name_author = models.CharField(max_length=200)
+    address_author = models.CharField(max_length=150)
+    amount_book= models.IntegerField()
+    email_author = models.EmailField(max_length=200)
+    date_release = models.DateField()
+
+
+class Laptops(models.Model):
+    manufacturer=models.CharField(max_length=50,null=True,blank=True)
+    name=models.CharField(max_length=20,null=True,blank=True)
+    ram=models.CharField(max_length=20,null=True,blank=True)
+    gpu=models.CharField(max_length=20,null=True,blank=True)
+    cpu=models.CharField(max_length=20,null=True,blank=True)
+    price=models.DecimalField(max_digits=50,null=True,decimal_places=2,blank=True)
+    
+    def __str__(self):
+        return (self.name)
